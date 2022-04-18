@@ -27,6 +27,8 @@ func parseLine(line string) string {
 		return fmt.Sprintf("%f", number)
 	case "p2r": // polar to rectangular
 		return p2r(line)
+	case "r2p": // rectangular to polar
+		return r2p(line)
 	case "exit":
 		return "exit"
 	default:
