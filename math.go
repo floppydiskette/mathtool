@@ -83,3 +83,67 @@ func r2p(line string) string {
 	// return result
 	return "(" + strconv.FormatFloat(r, 'f', -1, 64) + ", " + strconv.FormatFloat(theta, 'f', -1, 64) + "°)"
 }
+
+func polarVariations(line string) string {
+	// find all possible ways to describe a polar coordinate
+	// format: pVariations (r, theta)
+	// remove first word (command)
+	line = line[12:]
+	// find r
+	r := line[1:strings.Index(line, ",")]
+	// evaluate r
+	rValue, err := basicMath(r)
+	if err != nil {
+		return "Error: " + err.Error()
+	}
+	// find theta
+	theta := line[strings.Index(line, ",")+1:]
+	// if it exists, remove the last character (")")
+	if theta[len(theta)-1] == ')' {
+		theta = theta[:len(theta)-1]
+	}
+	// evaluate theta
+	thetaValue, err := basicMath(theta)
+	if err != nil {
+		return "Error: " + err.Error()
+	}
+	// there are four possible ways to describe a polar coordinate
+	// if r is positive, theta is either theta or 360 - theta
+	// if r is negative, theta is either theta or -(360 - theta)
+	// we can also make r opposite sign and then find the equivalent theta
+
+	var potentialVariations []string
+
+	// first, find theta in degrees
+	thetaDegrees := thetaValue * 180 / math.Pi
+
+	// do the first two cases
+	if rValue > 0 {
+		potentialVariations = append(potentialVariations, "("+strconv.FormatFloat(rValue, 'f', -1, 64)+", "+strconv.FormatFloat(thetaDegrees, 'f', -1, 64)+"°)")
+		potentialVariations = append(potentialVariations, "("+strconv.FormatFloat(rValue, 'f', -1, 64)+", -"+strconv.FormatFloat(360-thetaDegrees, 'f', -1, 64)+"°)")
+	} else {
+		potentialVariations = append(potentialVariations, "("+strconv.FormatFloat(-rValue, 'f', -1, 64)+", -"+strconv.FormatFloat(thetaDegrees, 'f', -1, 64)+"°)")
+		potentialVariations = append(potentialVariations, "("+strconv.FormatFloat(-rValue, 'f', -1, 64)+", "+strconv.FormatFloat(360-thetaDegrees, 'f', -1, 64)+"°)")
+	}
+
+	// find the equivalent theta for the second case
+	thetaOpposite := thetaValue + math.Pi
+	if thetaOpposite > math.Pi {
+		thetaOpposite = thetaOpposite - math.Pi*2
+	}
+
+	// convert thetaOpposite to degrees
+	thetaOppositeDegrees := thetaOpposite * 180 / math.Pi
+
+	// do the other two cases
+	if rValue > 0 {
+		potentialVariations = append(potentialVariations, "(-"+strconv.FormatFloat(rValue, 'f', -1, 64)+", "+strconv.FormatFloat(thetaOppositeDegrees, 'f', -1, 64)+"°)")
+		potentialVariations = append(potentialVariations, "(-"+strconv.FormatFloat(rValue, 'f', -1, 64)+", "+strconv.FormatFloat(360+thetaOppositeDegrees, 'f', -1, 64)+"°)")
+	} else {
+		potentialVariations = append(potentialVariations, "("+strconv.FormatFloat(rValue, 'f', -1, 64)+", -"+strconv.FormatFloat(thetaOppositeDegrees, 'f', -1, 64)+"°)")
+		potentialVariations = append(potentialVariations, "("+strconv.FormatFloat(rValue, 'f', -1, 64)+", "+strconv.FormatFloat(360+thetaOppositeDegrees, 'f', -1, 64)+"°)")
+	}
+
+	// return result
+	return strings.Join(potentialVariations, ", ")
+}

@@ -16,7 +16,7 @@ func getCommand(line string) string {
 }
 
 func parseLine(line string) string {
-	switch getCommand(line) {
+	switch strings.ToLower(getCommand(line)) {
 	case "bc":
 		line = line[3:]
 		number, err := basicMath(line)
@@ -29,6 +29,8 @@ func parseLine(line string) string {
 		return p2r(line)
 	case "r2p": // rectangular to polar
 		return r2p(line)
+	case "pvariations": // polar coordinate variations
+		return polarVariations(line)
 	case "exit":
 		return "exit"
 	default:
