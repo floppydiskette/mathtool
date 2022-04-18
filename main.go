@@ -31,6 +31,19 @@ func parseLine(line string) string {
 		return r2p(line)
 	case "pvariations": // polar coordinate variations
 		return polarVariations(line)
+	case "d2pp": // theta degrees to polar pi
+		return degreesToPolarPi(line)
+	case "simp": // simplify fraction
+		return simplifyFraction(line)
+	case "rads2d": // radians to degrees
+		return radsToDegrees(line)
+	case "steps": // enable solution steps
+		steps = !steps
+		if steps {
+			return "solution steps enabled"
+		} else {
+			return "solution steps disabled"
+		}
 	case "exit":
 		return "exit"
 	default:
